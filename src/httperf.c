@@ -114,6 +114,7 @@ static struct option longopts[] = {
 	{"client", required_argument, (int *) &param.client, 0},
 	{"close-with-reset", no_argument, &param.close_with_reset, 1},
 	{"debug", required_argument, 0, 'd'},
+	{"dump-events", no_argument, &param.dump_events, 1},
 	{"failure-status", required_argument, &param.failure_status, 0},
 	{"help", no_argument, 0, 'h'},
 	{"hog", no_argument, &param.hog, 1},
@@ -159,7 +160,7 @@ usage(void)
 {
 	printf("Usage: %s "
 	       "[-hdvV] [--add-header S] [--burst-length N] [--client N/N]\n"
-	       "\t[--close-with-reset] [--debug N] [--failure-status N]\n"
+	       "\t[--close-with-reset] [--debug N] [--dump-events] [--failure-status N]\n"
 	       "\t[--help] [--hog] [--http-version S] [--max-connections N]\n"
 	       "\t[--max-piped-calls N] [--method S] [--no-host-hdr]\n"
 	       "\t[--num-calls N] [--num-conns N] [--session-cookies]\n"
@@ -984,6 +985,8 @@ main(int argc, char **argv)
 	}
 	if (param.hog)
 		printf(" --hog");
+	if (param.dump_events)
+		printf(" --dump-events");
 	if (param.close_with_reset)
 		printf(" --close-with-reset");
 	if (param.think_timeout > 0)
@@ -1140,6 +1143,13 @@ main(int argc, char **argv)
 		(*gen[i]->stop) ();
 	for (i = 0; i < num_stats; ++i)
 		(*stat[i]->dump) ();
+
+	if (param.dump_events) {
+		struct event_stat *e;
+		TAILQ_FOREACH(e, &event_stat_tailq, next) {
+			printf("%s:%lu:%lf\n", event_name[e->type], e->id, e->time);
+		}
+	}
 
 	timer_free_all();
 

@@ -43,6 +43,9 @@
 
 #define MAX_NUM_OPS	4
 
+struct event_stat_tailq event_stat_tailq =
+           TAILQ_HEAD_INITIALIZER(event_stat_tailq);
+
 const char * const event_name[EV_NUM_EVENT_TYPES] =
   {
     "EV_NULL",
@@ -106,11 +109,37 @@ event_register_handler (Event_Type et, Event_Handler handler, Any_Type arg)
   action[et].num_ops = n + 1;
 }
 
+void event_stat_signal(Event_Type type, u_long id)
+{
+  struct event_stat *e = malloc(sizeof(struct event_stat));
+  e->type = type;
+  e->id = id;
+  e->time = timer_now();
+  TAILQ_INSERT_TAIL(&event_stat_tailq, e, next);
+}
+
 void
 event_signal (Event_Type type, Object *obj, Any_Type arg)
 {
   Event_Action *act = action + type;
   struct closure *c, *end;
+
+  if (param.dump_events) {
+    struct event_stat *e;
+    u_long id = -1;
+    switch (type) {
+      case EV_CONN_CONNECTED:
+      //case EV_CONN_CLOSE: // made at call site to get actual sd number
+      case EV_CONN_TIMEOUT:
+        id = ((Conn *)obj)->sd;
+      case EV_CALL_SEND_START:
+      case EV_CALL_SEND_STOP:
+      case EV_CALL_RECV_START:
+      case EV_CALL_DESTROYED:
+        id = (id == -1) ? ((Call *)obj)->id : id;
+        event_stat_signal(type, id);
+    }
+  }
 
   if (DBG > 1)
     {

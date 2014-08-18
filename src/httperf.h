@@ -104,6 +104,7 @@ typedef struct Cmdline_Params
     int max_piped;	/* max # of piped calls per connection */
     int max_conns;	/* max # of connections per session */
     int hog;		/* client may hog as much resources as possible */
+    int dump_events; /* dump all events out at program exit */
     int send_buffer_size;
     int recv_buffer_size;
     int failure_status;	/* status code that should be considered failure */

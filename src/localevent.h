@@ -34,6 +34,21 @@
 #ifndef localevent_h
 #define localevent_h
 
+#include <stdint.h>
+#include <sys/queue.h>
+#include <malloc.h>
+#include "timer.h"
+#include "call.h"
+#include "conn.h"
+struct event_stat {
+	TAILQ_ENTRY(event) next;
+	int type;
+	u_long id;
+	Time time;
+};
+TAILQ_HEAD(event_stat_tailq, event_stat);
+extern struct event_stat_tailq event_stat_tailq;
+
 typedef enum Event_Type
   {
     EV_NULL = 0,
@@ -87,5 +102,6 @@ typedef void (*Event_Handler) (Event_Type type, Object *obj,
 extern void event_register_handler (Event_Type et, Event_Handler handler,
 				    Any_Type arg);
 extern void event_signal (Event_Type type, Object *obj, Any_Type arg);
+extern void event_stat_signal (Event_Type type, u_long id);
 
 #endif /* localevent_h */

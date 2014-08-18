@@ -1082,6 +1082,11 @@ core_close(Conn * conn)
 	}
 	conn->recvq = 0;
 
+	if (param.dump_events) {
+		// Done here at call site so we can get access to the conn->sd
+		event_stat_signal(EV_CONN_CLOSE, conn->sd);
+	}
+
 	sd = conn->sd;
 	conn->sd = -1;
 
