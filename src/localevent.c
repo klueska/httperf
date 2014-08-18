@@ -43,7 +43,7 @@
 
 #define MAX_NUM_OPS	4
 
-static const char * const event_name[EV_NUM_EVENT_TYPES] =
+const char * const event_name[EV_NUM_EVENT_TYPES] =
   {
     "EV_NULL",
     "EV_PERF_SAMPLE",

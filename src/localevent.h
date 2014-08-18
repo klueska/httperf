@@ -70,6 +70,7 @@ typedef enum Event_Type
     EV_NUM_EVENT_TYPES
   }
 Event_Type;
+const char * const event_name[EV_NUM_EVENT_TYPES];
 
 typedef struct Event
   {
