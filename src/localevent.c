@@ -45,6 +45,7 @@
 
 static const char * const event_name[EV_NUM_EVENT_TYPES] =
   {
+    "EV_NULL",
     "EV_PERF_SAMPLE",
     "EV_HOSTNAME_LOOKUP_START",
     "EV_HOSTNAME_LOOKUP_STOP",
